@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NODO by RADIX v0.4.1 — Suite Local para Biólogos y Consultores SEMARNAT (MIA)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        pearl: {
+                            50: '#F8F9FE',
+                            100: '#EEF2FF',
+                            200: '#E0E7FF',
+                            300: '#C7D2FE',
+                            400: '#A5B4FC',
+                            500: '#818CF8',
+                            600: '#6366F1',
+                            700: '#4F46E5',
+                            800: '#3730A3',
+                            900: '#1E1B4B',
+                        }
+                    },
+                    animation: {
+                        'float-slow': 'float 9s ease-in-out infinite',
+                        'float-delayed': 'float 11s ease-in-out 3s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) scale(1)' },
+                            '50%': { transform: 'translateY(-18px) scale(1.03)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #F8F9FE;
+            --bg-secondary: #EEF2FF;
+            --text-main: #1E1B4B;
+            --text-muted: #475569;
+            --glass-bg: rgba(255, 255, 255, 0.70);
+            --glass-bg-strong: rgba(255, 255, 255, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.94);
+            --glass-shadow: 0 20px 50px rgba(99, 102, 241, 0.13), inset 0 1px 2px rgba(255, 255, 255, 0.98);
+            --orb-1: rgba(165, 180, 252, 0.55);
+            --orb-2: rgba(199, 210, 254, 0.65);
+            --orb-3: rgba(129, 140, 248, 0.35);
+        }
+
+        html.dark {
+            --bg-primary: #0B0D1E;
+            --bg-secondary: #131735;
+            --text-main: #F1F5F9;
+            --text-muted: #94A3B8;
+            --glass-bg: rgba(23, 28, 62, 0.66);
+            --glass-bg-strong: rgba(28, 34, 74, 0.85);
+            --glass-border: rgba(165, 180, 252, 0.25);
+            --glass-shadow: 0 24px 60px rgba(5, 7, 20, 0.72), inset 0 1px 1px rgba(199, 210, 254, 0.22);
+            --orb-1: rgba(99, 102, 241, 0.25);
+            --orb-2: rgba(139, 92, 246, 0.22);
+            --orb-3: rgba(16, 185, 129, 0.14);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        .pearl-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(22px) saturate(180%);
+            -webkit-backdrop-filter: blur(22px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .pearl-glass-strong {
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(28px) saturate(190%);
+            -webkit-backdrop-filter: blur(28px) saturate(190%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .pearl-card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 28px 65px rgba(99, 102, 241, 0.22), inset 0 1px 3px rgba(255, 255, 255, 1);
+            border-color: rgba(129, 140, 248, 0.65);
+        }
+
+        .btn-pearl-3d {
+            background: linear-gradient(180deg, #B4C2FF 0%, #818CF8 45%, #4F46E5 100%);
+            color: #FFFFFF;
+            box-shadow: 
+                0 12px 28px -6px rgba(79, 70, 229, 0.55),
+                inset 0 2px 4px rgba(255, 255, 255, 0.85),
+                inset 0 -3px 6px rgba(55, 48, 163, 0.38);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            transition: all 0.25s ease;
+        }
+
+        .btn-pearl-3d:hover {
+            transform: translateY(-2px) scale(1.01);
+            background: linear-gradient(180deg, #C7D2FE 0%, #8E9FF9 45%, #4338CA 100%);
+            box-shadow: 
+                0 18px 34px -6px rgba(79, 70, 229, 0.68),
+                inset 0 2px 6px rgba(255, 255, 255, 0.95),
+                inset 0 -3px 6px rgba(55, 48, 163, 0.45);
+        }
+
+        .ambient-orb {
+            position: fixed;
+            border-radius: 9999px;
+            filter: blur(85px);
+            pointer-events: none;
+            z-index: -1;
+            transition: background 0.5s ease;
+        }
+
+        .bg-pearl-grid {
+            background-size: 42px 42px;
+            background-image: 
+                linear-gradient(to right, rgba(129, 140, 248, 0.09) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(129, 140, 248, 0.09) 1px, transparent 1px);
+        }
+
+        .nodo-3d-svg {
+            filter: drop-shadow(0 14px 24px rgba(99, 102, 241, 0.28));
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+        }
+        .nodo-3d-svg:hover {
+            transform: scale(1.03);
+            filter: drop-shadow(0 18px 32px rgba(79, 70, 229, 0.42));
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(238, 242, 255, 0.4);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #A5B4FC, #6366F1);
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-500 selection:text-white bg-pearl-grid min-h-screen relative">
+
+    <!-- SHARED SVG DEFINITIONS FOR 3D PEARL LAVENDER TUBULAR LOGO (NODO_lavanda_perlada.png) -->
+    <svg width="0" height="0" class="absolute pointer-events-none" aria-hidden="true">
+        <defs>
+            <linearGradient id="pearlTubeGrad" x1="15%" y1="5%" x2="85%" y2="95%">
+                <stop offset="0%" stop-color="#F5F7FF" />
+                <stop offset="24%" stop-color="#C7D2FE" />
+                <stop offset="58%" stop-color="#818CF8" />
+                <stop offset="85%" stop-color="#6366F1" />
+                <stop offset="100%" stop-color="#4338CA" />
+            </linearGradient>
+
+            <linearGradient id="pearlHighlightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.94" />
+                <stop offset="40%" stop-color="#E0E7FF" stop-opacity="0.48" />
+                <stop offset="100%" stop-color="#6366F1" stop-opacity="0.0" />
+            </linearGradient>
+
+            <radialGradient id="pearlSphereGrad" cx="32%" cy="28%" r="68%" fx="28%" fy="24%">
+                <stop offset="0%" stop-color="#FFFFFF" />
+                <stop offset="26%" stop-color="#E0E7FF" />
+                <stop offset="58%" stop-color="#818CF8" />
+                <stop offset="85%" stop-color="#6366F1" />
+                <stop offset="100%" stop-color="#4338CA" />
+            </radialGradient>
+
+            <filter id="pearl3DFilter" x="-15%" y="-15%" width="130%" height="130%">
+                <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#4338CA" flood-opacity="0.24" result="drop" />
+                <feGaussianBlur in="SourceAlpha" stdDeviation="3.5" result="blur" />
+                <feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.88" specularExponent="28" lighting-color="#FFFFFF" result="specOut">
+                    <fePointLight x="-120" y="-160" z="240" />
+                </feSpecularLighting>
+                <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specMask" />
+                <feMerge>
+                    <feMergeNode in="SourceGraphic" />
+                    <feMergeNode in="specMask" />
+                </feMerge>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Ambient Animated Background Orbs -->
+    <div class="ambient-orb w-[520px] h-[520px] -top-28 -left-24 animate-float-slow" style="background: var(--orb-1);"></div>
+    <div class="ambient-orb w-[600px] h-[600px] top-1/4 -right-36 animate-float-delayed" style="background: var(--orb-2);"></div>
+    <div class="ambient-orb w-[480px] h-[480px] bottom-12 left-1/4 animate-float-slow" style="background: var(--orb-3);"></div>
+
+    <!-- ================= 1. FLOATING GLASSMORPHIC NAVBAR ================= -->
+    <header class="fixed top-4 inset-x-0 z-50 px-4 sm:px-6 lg:px-10">
+        <nav class="max-w-7xl mx-auto pearl-glass rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group focus:outline-none">
+                <svg class="h-9 sm:h-10 w-auto nodo-3d-svg" viewBox="0 0 510 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="NODO Lavanda Perlada Logo">
+                    <g filter="url(#pearl3DFilter)">
+                        <path d="M 32 122 L 32 32 L 106 120 L 106 30" stroke="url(#pearlTubeGrad)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M 32 122 L 32 32 L 106 120 L 106 30" stroke="url(#pearlHighlightGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.7" />
+                        <circle cx="192" cy="76" r="48" stroke="url(#pearlTubeGrad)" stroke-width="26" />
+                        <circle cx="192" cy="76" r="48" stroke="url(#pearlHighlightGrad)" stroke-width="9" opacity="0.65" />
+                        <circle cx="125" cy="76" r="21" fill="url(#pearlSphereGrad)" />
+                        <ellipse cx="118" cy="69" rx="7" ry="4.5" transform="rotate(-25 118 69)" fill="#FFFFFF" opacity="0.85" />
+                        <path d="M 284 36 A 47 47 0 1 1 284 116" stroke="url(#pearlTubeGrad)" stroke-width="26" stroke-linecap="round" />
+                        <path d="M 284 36 A 47 47 0 1 1 284 116" stroke="url(#pearlHighlightGrad)" stroke-width="9" stroke-linecap="round" opacity="0.65" />
+                        <circle cx="434" cy="76" r="48" stroke="url(#pearlTubeGrad)" stroke-width="26" />
+                        <circle cx="434" cy="76" r="48" stroke="url(#pearlHighlightGrad)" stroke-width="9" opacity="0.65" />
+                        <circle cx="366" cy="76" r="21" fill="url(#pearlSphereGrad)" />
+                        <ellipse cx="359" cy="69" rx="7" ry="4.5" transform="rotate(-25 359 69)" fill="#FFFFFF" opacity="0.85" />
+                    </g>
+                </svg>
+                <div class="hidden sm:flex flex-col border-l border-indigo-300/60 dark:border-indigo-500/30 pl-3">
+                    <span class="text-[11px] font-mono uppercase tracking-widest text-indigo-600 dark:text-indigo-300 font-bold">PARA BIÓLOGOS SEMARNAT</span>
+                    <span class="text-xs font-medium text-slate-600 dark:text-slate-400">v0.4.1 • MIA-P / Regional</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <div class="hidden lg:flex items-center gap-6 text-sm font-medium">
+                <a href="#dolor-biologo" class="hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors">Retos SEMARNAT</a>
+                <a href="#estacion-biologo" class="hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    Laboratorio NOM-059 & Cap. V
+                </a>
+                <a href="#capitulos-mia" class="hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors">8 Capítulos Guía</a>
+                <a href="#privacidad-campo" class="hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors">Privacidad de Muestreos</a>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="pearl-glass p-2.5 rounded-xl text-indigo-900 dark:text-indigo-200 hover:scale-105 transition-transform" title="Cambiar entre Lavanda Perlada Claro y Cristal Nocturno">
+                    <i id="themeIcon" class="ph-duotone ph-moon-stars text-xl"></i>
+                </button>
+
+                <button onclick="openDictamenModal()" class="btn-pearl-3d px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
+                    <i class="ph-bold ph-file-magnifying-glass text-base"></i>
+                    <span>Ver Dictamen MIA</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ================= 2. HERO SECTION (FOCUSED ON THE BIOLOGIST & SEMARNAT) ================= -->
+    <section class="relative pt-32 sm:pt-36 pb-20 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
+        <div class="flex flex-col items-center text-center max-w-4xl mx-auto">
+            
+            <!-- Biologist & SEMARNAT Status Pill -->
+            <div class="pearl-glass px-4 py-1.5 rounded-full inline-flex flex-wrap items-center justify-center gap-2.5 mb-7 border border-white/90">
+                <span class="px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                    <i class="ph-fill ph-leaf"></i> LGEEPA • NOM-059-SEMARNAT-2010
+                </span>
+                <span class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200">
+                    Diseñado para Biólogos, Ecólogos y Coordinadores de MIA • <code class="font-mono font-semibold text-indigo-600 dark:text-indigo-300">RADIX_MIA_Local v0.4.1</code>
+                </span>
+            </div>
+
+            <!-- Giant 3D SVG Recreation of NODO_lavanda_perlada.png -->
+            <div class="mb-6 relative group cursor-pointer" onclick="triggerLogoPulse()" title="NODO by RADIX — Inteligencia Ambiental para Biólogos">
+                <div class="absolute -inset-6 bg-gradient-to-r from-indigo-300/35 via-purple-200/45 to-emerald-200/30 rounded-full blur-2xl opacity-75 group-hover:opacity-100 transition duration-500"></div>
+                <svg id="heroNodoLogo" class="relative w-60 sm:w-76 md:w-88 h-auto mx-auto nodo-3d-svg" viewBox="0 0 510 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g filter="url(#pearl3DFilter)">
+                        <path d="M 32 122 L 32 32 L 106 120 L 106 30" stroke="url(#pearlTubeGrad)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M 32 122 L 32 32 L 106 120 L 106 30" stroke="url(#pearlHighlightGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.78" />
+                        <circle cx="192" cy="76" r="48" stroke="url(#pearlTubeGrad)" stroke-width="26" />
+                        <circle cx="192" cy="76" r="48" stroke="url(#pearlHighlightGrad)" stroke-width="9" opacity="0.72" />
+                        <circle cx="125" cy="76" r="21.5" fill="url(#pearlSphereGrad)" />
+                        <ellipse cx="117" cy="68" rx="7.5" ry="4.5" transform="rotate(-25 117 68)" fill="#FFFFFF" opacity="0.9" />
+                        <path d="M 284 36 A 47 47 0 1 1 284 116" stroke="url(#pearlTubeGrad)" stroke-width="26" stroke-linecap="round" />
+                        <path d="M 284 36 A 47 47 0 1 1 284 116" stroke="url(#pearlHighlightGrad)" stroke-width="9" stroke-linecap="round" opacity="0.72" />
+                        <circle cx="434" cy="76" r="48" stroke="url(#pearlTubeGrad)" stroke-width="26" />
+                        <circle cx="434" cy="76" r="48" stroke="url(#pearlHighlightGrad)" stroke-width="9" opacity="0.72" />
+                        <circle cx="366" cy="76" r="21.5" fill="url(#pearlSphereGrad)" />
+                        <ellipse cx="358" cy="68" rx="7.5" ry="4.5" transform="rotate(-25 358 68)" fill="#FFFFFF" opacity="0.9" />
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Main Headline -->
+            <h1 class="font-display text-3xl sm:text-5xl lg:text-[54px] font-extrabold tracking-tight leading-[1.12] mb-6">
+                Tu criterio biológico en campo, <br class="hidden sm:inline" />
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 via-indigo-500 to-emerald-600 dark:from-indigo-300 dark:via-indigo-200 dark:to-emerald-300">
+                    blindado ante la evaluación de SEMARNAT
+                </span>
+            </h1>
+
+            <p class="text-base sm:text-lg lg:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed mb-9">
+                Menos noches peleando con formatos de Word, tablas de Excel desconectadas y errores de transcripción taxonómica; <strong>más rigor científico en tu Sistema Ambiental (Cap. IV), cruce de especies en NOM-059, matrices de impacto (Cap. V) y medidas de mitigación trazables (Cap. VI)</strong> para evitar prevenciones y solicitudes de información adicional.
+            </p>
+
+            <!-- Hero CTAs -->
+            <div class="flex flex-wrap items-center justify-center gap-4 mb-14">
+                <a href="#estacion-biologo" class="btn-pearl-3d px-7 py-4 rounded-2xl font-display font-bold text-sm sm:text-base flex items-center gap-3">
+                    <i class="ph-bold ph-binoculars text-xl"></i>
+                    <span>Abrir Estación del Biólogo (Cap. III, IV y V)</span>
+                </a>
+                <a href="#capitulos-mia" class="pearl-glass px-7 py-4 rounded-2xl font-display font-semibold text-sm sm:text-base text-indigo-950 dark:text-white hover:border-indigo-400 transition flex items-center gap-2.5">
+                    <i class="ph-duotone ph-books text-xl text-indigo-600 dark:text-indigo-400"></i>
+                    <span>Explorar los 8 Capítulos SEMARNAT</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- INTERACTIVE HERO PREVIEW: LIVE BIOLOGIST WORKSPACE -->
+        <div class="pearl-glass-strong rounded-3xl p-3 sm:p-5 border border-white/90 shadow-2xl max-w-6xl mx-auto">
+            <!-- Top Window Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3.5 mb-4 border-b border-indigo-200/60 dark:border-indigo-500/20 px-2">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-3.5 h-3.5 rounded-full bg-rose-400/90 inline-block"></span>
+                    <span class="w-3.5 h-3.5 rounded-full bg-amber-400/90 inline-block"></span>
+                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-400/90 inline-block"></span>
+                    <span class="ml-2 font-mono text-xs font-semibold text-indigo-900 dark:text-indigo-200 bg-indigo-500/10 px-3 py-1 rounded-lg border border-indigo-400/20">
+                        Expediente Activo: MIA-Particular • Proyecto Costero / Fotovoltaico (UGA-14)
+                    </span>
+                </div>
+                <!-- Workspace Switcher Tabs -->
+                <div class="flex flex-wrap items-center gap-1.5 bg-indigo-100/70 dark:bg-slate-800/80 p-1 rounded-xl">
+                    <button onclick="switchHeroWorkspace('nom059')" id="hero-tab-nom059" class="hero-ws-tab px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-white dark:bg-indigo-600 text-indigo-900 dark:text-white shadow-sm transition">
+                        Inventario & NOM-059 (Cap. IV)
+                    </button>
+                    <button onclick="switchHeroWorkspace('diversidad')" id="hero-tab-diversidad" class="hero-ws-tab px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-700 transition">
+                        Sistema Ambiental & Índices
+                    </button>
+                    <button onclick="switchHeroWorkspace('trazabilidad')" id="hero-tab-trazabilidad" class="hero-ws-tab px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-700 transition">
+                        Trazabilidad Cap. V → Cap. VI
+                    </button>
+                    <button onclick="switchHeroWorkspace('vinculacion')" id="hero-tab-vinculacion" class="hero-ws-tab px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-700 transition">
+                        Vinculación LGEEPA / POET
+                    </button>
+                </div>
+            </div>
+
+            <!-- Workspace Dynamic Content Area -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+                <!-- Left Panel: Biologist Compliance Checklist -->
+                <div class="lg:col-span-4 pearl-glass rounded-2xl p-4 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono uppercase tracking-wider font-bold text-indigo-700 dark:text-indigo-300">Semáforo de Auditoría DGIRA</span>
+                            <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold">0 Inconsistencias</span>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                            <li class="p-2.5 rounded-xl bg-white/75 dark:bg-slate-800/70 border border-indigo-200/60 dark:border-slate-700 flex items-center justify-between">
+                                <span class="flex items-center gap-2 font-medium"><i class="ph-fill ph-check-circle text-emerald-500 text-base"></i> Especies en NOM-059</span>
+                                <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-300 font-bold">5 detectadas (Pr, A, P)</span>
+                            </li>
+                            <li class="p-2.5 rounded-xl bg-white/75 dark:bg-slate-800/70 border border-indigo-200/60 dark:border-slate-700 flex items-center justify-between">
+                                <span class="flex items-center gap-2 font-medium"><i class="ph-fill ph-check-circle text-emerald-500 text-base"></i> Índices Ecológicos (Cap. IV)</span>
+                                <span class="font-mono text-[11px] text-indigo-600 dark:text-indigo-300 font-bold">H' = 2.84 bits/ind</span>
+                            </li>
+                            <li class="p-2.5 rounded-xl bg-white/75 dark:bg-slate-800/70 border border-indigo-200/60 dark:border-slate-700 flex items-center justify-between">
+                                <span class="flex items-center gap-2 font-medium"><i class="ph-fill ph-check-circle text-emerald-500 text-base"></i> Vinculación NOM-022 / POET</span>
+                                <span class="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">Validada</span>
+                            </li>
+                            <li class="p-2.5 rounded-xl bg-indigo-500/15 border border-indigo-400/40 flex items-center justify-between">
+                                <span class="flex items-center gap-2 font-semibold text-indigo-950 dark:text-white"><i class="ph-fill ph-git-merge text-indigo-600 text-base"></i> Espejo Cap. V ↔ Cap. VI</span>
+                                <span class="font-mono text-[11px] text-indigo-700 dark:text-indigo-300 font-bold">14/14 Medidas</span>
+                            </li>
+                            <li class="p-2.5 rounded-xl bg-white/75 dark:bg-slate-800/70 border border-indigo-200/60 dark:border-slate-700 flex items-center justify-between">
+                                <span class="flex items-center gap-2 font-medium"><i class="ph-fill ph-identification-badge text-indigo-500 text-base"></i> Cédulas Equipo Biológico</span>
+                                <span class="font-mono text-[11px] text-slate-500">team.py (Art. 35)</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-indigo-200/60 dark:border-indigo-500/20 flex items-center justify-between text-xs">
+                        <span class="text-slate-500 dark:text-slate-400">Ejecución local: <code class="font-mono">INICIAR_RADIX.cmd</code></span>
+                        <span class="font-mono font-semibold text-emerald-600 dark:text-emerald-400">Sin Nube Externa</span>
+                    </div>
+                </div>
+
+                <!-- Right Dynamic Viewport -->
+                <div id="heroWorkspaceViewport" class="lg:col-span-8 pearl-glass rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-[340px]">
+                    <!-- Populated via JS switchHeroWorkspace() -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 3. EL DOLOR DEL BIÓLOGO AMBIENTAL VS. EL FLUJO NODO ================= -->
+    <section id="dolor-biologo" class="py-20 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-14">
+            <span class="px-3.5 py-1.5 rounded-full pearl-glass text-xs font-mono font-semibold text-indigo-700 dark:text-indigo-300 inline-block mb-3">
+                POR QUÉ SEMARNAT EMITE PREVENCIONES Y REQUERIMIENTOS
+            </span>
+            <h2 class="font-display text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">
+                Del caos de hojas de cálculo sueltas a un <span class="text-indigo-600 dark:text-indigo-400">Expediente Biológico Congruente</span>
+            </h2>
+            <p class="text-slate-600 dark:text-slate-300 text-base">
+                El 78% de los oficios de solicitud de información adicional en una MIA no ocurren por mal trabajo de campo, sino por <strong>incongruencias entre capítulos</strong> cuando el equipo trabaja bajo presión en múltiples archivos de Word y Excel.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+            <!-- Traditional Pain Card -->
+            <div class="pearl-glass rounded-3xl p-7 border-l-4 border-l-rose-500/80 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30">
+                            FLUJO TRADICIONAL FRAGMENTADO
+                        </span>
+                        <i class="ph-duotone ph-warning-octagon text-2xl text-rose-500"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-4">Lo que desgasta al Biólogo antes de ingresar a ventanilla:</h3>
+                    <ul class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
+                        <li class="flex items-start gap-3">
+                            <i class="ph-bold ph-x-circle text-rose-500 text-lg shrink-0 mt-0.5"></i>
+                            <span><strong>Especies huérfanas entre Cap. IV y Cap. VI:</strong> Reportas <em>Ctenosaura similis</em> (Amenazada en NOM-059) en el listado faunístico del Capítulo IV, pero olvidas incluir su programa específico de rescate y ahuyentamiento en el Capítulo VI.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="ph-bold ph-x-circle text-rose-500 text-lg shrink-0 mt-0.5"></i>
+                            <span><strong>Matrices de impacto desconectadas del texto:</strong> Cambias un valor de reversibilidad o extensión en tu Excel del Capítulo V a última hora y los párrafos descriptivos en Word quedan con puntajes viejos.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="ph-bold ph-x-circle text-rose-500 text-lg shrink-0 mt-0.5"></i>
+                            <span><strong>Superficies de desmonte contradictorias:</strong> El cuadro de obras del Capítulo II dice 4.82 ha de selva baja caducifolia y el cálculo de pérdida de cobertura vegetal en el Capítulo V usa 5.10 ha.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="ph-bold ph-x-circle text-rose-500 text-lg shrink-0 mt-0.5"></i>
+                            <span><strong>Horas perdidas en vinculación jurídica repetitiva:</strong> Copiar y pegar artículos de la LGEEPA, Reglamentos y criterios de UGA del POET manualmente con riesgo de citar normas abrogadas.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-6 pt-4 border-t border-rose-200/50 dark:border-rose-500/20 text-xs font-mono text-rose-600 dark:text-rose-300 flex items-center gap-2">
+                    <i class="ph-fill ph-clock-countdown text-base"></i> Resultado: Semanas de retrabajo y riesgo de suspensión del procedimiento.
+                </div>
+            </div>
+
+            <!-- NODO Solution Card -->
+            <div class="pearl-glass-strong rounded-3xl p-7 border-l-4 border-l-emerald-500 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                            FLUJO UNIFICADO EN NODO v0.4.1
+                        </span>
+                        <i class="ph-duotone ph-shield-check text-2xl text-emerald-500"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-4">Cómo <code class="font-mono text-indigo-600 dark:text-indigo-300">RADIX_MIA_Local</code> protege tu dictamen técnico:</h3>
+                    <ul class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
+                        <li class="flex items-start gap-3">
+                            <i class="ph-bold ph-check-circle text-emerald-500 text-lg shrink-0 mt-0.5"></i>
+                            <span><strong>Trazabilidad Biológica Automática:</strong> Toda especie con estatus en la <strong>NOM-059-SEMARNAT-2010</strong> o CITES registrada en el Sistema Ambiental exige y vincula su medida de manejo y rescate en el Capítulo VI.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="ph-bold ph-check-circle text-emerald-500 text-lg shrink-0 mt-0.5"></i>
+                            <span><strong>Motor <code class="font-mono">chapter_five.py</code> en tiempo real:</strong> Al ajustar la Intensidad, Extensión o Sinergia en la matriz, el Índice de Importancia ($I$) y la narrativa técnica del impacto se actualizan al instante.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="ph-bold ph-check-circle text-emerald-500 text-lg shrink-0 mt-0.5"></i>
+                            <span><strong>Fuente Única de Verdad (<code class="font-mono">store.py</code>):</strong> Los polígonos, superficies de aprovechamiento, coordenadas UTM y anexos cartográficos UUID se sincronizan en los 8 capítulos oficiales.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="ph-bold ph-check-circle text-emerald-500 text-lg shrink-0 mt-0.5"></i>
+                            <span><strong>Copiloto Normativo (<code class="font-mono">assistant.py</code>):</strong> Redacta la vinculación exacta con el Art. 28 de la LGEEPA, NOM-059, NOM-022 (humedales/manglar), POET y ANPs a partir de tus datos reales de campo.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-6 pt-4 border-t border-emerald-200/60 dark:border-emerald-500/20 text-xs font-mono text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
+                    <i class="ph-fill ph-seal-check text-base"></i> Resultado: Expediente consistente, auditable y listo para exportar en <code class="underline">exports.py</code>.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 4. INTERACTIVE SEMARNAT BIOLOGIST WORKBENCH (3 LIVE FUNCTIONAL TABS) ================= -->
+    <section id="estacion-biologo" class="py-20 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
+        <div class="pearl-glass-strong rounded-3xl p-6 sm:p-10 lg:p-12 border border-white/90 relative overflow-hidden">
+            <div class="w-64 h-64 rounded-full bg-gradient-to-br from-indigo-300/40 to-emerald-300/30 blur-2xl absolute -top-20 -right-20 pointer-events-none"></div>
+
+            <!-- Section Header + Workbench Mode Switcher -->
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/15 border border-indigo-400/30 text-xs font-mono font-bold text-indigo-700 dark:text-indigo-300 mb-3">
+                        <span class="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></span>
+                        <span>ESTACIÓN INTERACTIVA DEL BIÓLOGO CONSULTOR</span>
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
+                        Prueba los 3 Motores Técnicos de NODO
+                    </h2>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
+                        Interactúa con las herramientas que utilizan los módulos <code class="font-mono text-indigo-600 dark:text-indigo-300">chapter_five.py</code>, <code class="font-mono text-indigo-600 dark:text-indigo-300">structure.py</code> y <code class="font-mono text-indigo-600 dark:text-indigo-300">assistant.py</code> para resolver los capítulos más exigentes de la guía SEMARNAT.
+                    </p>
+                </div>
+
+                <!-- 3 Main Workbench Tabs -->
+                <div class="flex flex-wrap gap-2 bg-indigo-100/80 dark:bg-slate-800/90 p-1.5 rounded-2xl">
+                    <button onclick="switchWorkbenchTab('cap5')" id="wb-btn-cap5" class="wb-tab-btn btn-pearl-3d px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2">
+                        <i class="ph-bold ph-sliders-horizontal"></i>
+                        <span>1. Matriz Cap. V & Mitigación</span>
+                    </button>
+                    <button onclick="switchWorkbenchTab('nom059')" id="wb-btn-nom059" class="wb-tab-btn pearl-glass px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
+                        <i class="ph-bold ph-paw-print"></i>
+                        <span>2. Validador NOM-059 (Cap. IV)</span>
+                    </button>
+                    <button onclick="switchWorkbenchTab('juridico')" id="wb-btn-juridico" class="wb-tab-btn pearl-glass px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
+                        <i class="ph-bold ph-scales"></i>
+                        <span>3. Vinculación Jurídica (Cap. III)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ==================== WORKBENCH TAB 1: SIMULADOR CAPÍTULO V (chapter_five.py) ==================== -->
+            <div id="wb-panel-cap5" class="wb-panel grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Controls -->
+                <div class="lg:col-span-6 pearl-glass rounded-2xl p-6 space-y-5">
+                    <div class="flex items-center justify-between border-b border-indigo-200/60 dark:border-indigo-500/20 pb-3">
+                        <span class="font-display font-bold text-base flex items-center gap-2">
+                            <i class="ph-duotone ph-matrix-logo text-indigo-600 text-xl"></i>
+                            Parámetros de Interacción Ecológica (<code class="font-mono text-xs">chapter_five.py</code>)
+                        </span>
+                        <span class="font-mono text-xs text-emerald-600 dark:text-emerald-400 font-semibold">Conesa / SEMARNAT</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+                                Etapa y Actividad del Proyecto
+                            </label>
+                            <select id="simActivity" onchange="updateCap5Simulation()" class="w-full pearl-glass px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/80 dark:bg-slate-800/90">
+                                <option value="desmonte">Preparación: Desmonte y Despalme de Vegetación</option>
+                                <option value="relleno">Construcción: Nivelación y Movimiento de Tierras</option>
+                                <option value="vialidades">Construcción: Apertura de Caminos y Drenaje</option>
+                                <option value="operacion">Operación: Funcionamiento y Mantenimiento</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+                                Factor Biótico / Abiótico Afectado
+                            </label>
+                            <select id="simFactor" onchange="updateCap5Simulation()" class="w-full pearl-glass px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/80 dark:bg-slate-800/90">
+                                <option value="selva">Fragmentación de Selva Baja / Cobertura Forestal</option>
+                                <option value="herpeto">Desplazamiento de Herpetofauna en NOM-059</option>
+                                <option value="hidro">Alteración de Flujos Hidrológicos / Humedal</option>
+                                <option value="suelo">Pérdida de Horizonte Orgánico Edáfico (Suelo)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Sliders -->
+                    <div class="space-y-4 pt-1">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>Intensidad de la Alteración Biológica (<code class="font-mono">IN</code>)</span>
+                                <span id="valIN" class="font-mono text-indigo-600 dark:text-indigo-300 font-bold">4 / 8</span>
+                            </div>
+                            <input id="sliderIN" type="range" min="1" max="8" value="4" oninput="updateCap5Simulation()" class="w-full accent-indigo-600 cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>Extensión en el Sistema Ambiental (<code class="font-mono">EX</code>)</span>
+                                <span id="valEX" class="font-mono text-indigo-600 dark:text-indigo-300 font-bold">2 / 4</span>
+                            </div>
+                            <input id="sliderEX" type="range" min="1" max="4" value="2" oninput="updateCap5Simulation()" class="w-full accent-indigo-600 cursor-pointer">
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span>Persistencia (<code class="font-mono">PE</code>)</span>
+                                    <span id="valPE" class="font-mono text-indigo-600 dark:text-indigo-300 font-bold">2</span>
+                                </div>
+                                <input id="sliderPE" type="range" min="1" max="4" value="2" oninput="updateCap5Simulation()" class="w-full accent-indigo-600 cursor-pointer">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span>Reversibilidad (<code class="font-mono">RV</code>)</span>
+                                    <span id="valRV" class="font-mono text-indigo-600 dark:text-indigo-300 font-bold">2</span>
+                                </div>
+                                <input id="sliderRV" type="range" min="1" max="4" value="2" oninput="updateCap5Simulation()" class="w-full accent-indigo-600 cursor-pointer">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span>Recuperabilidad (<code class="font-mono">MC</code>)</span>
+                                    <span id="valMC" class="font-mono text-indigo-600 dark:text-indigo-300 font-bold">2</span>
+                                </div>
+                                <input id="sliderMC" type="range" min="1" max="8" value="2" oninput="updateCap5Simulation()" class="w-full accent-indigo-600 cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 border-t border-indigo-200/60 dark:border-indigo-500/20">
+                        <span>Fórmula: <code class="font-mono">I = ±[3(IN) + 2(EX) + MO + PE + RV + SI + AC + EF + PR + MC]</code></span>
+                        <button onclick="randomizeCap5()" class="text-indigo-600 dark:text-indigo-300 font-semibold hover:underline flex items-center gap-1">
+                            <i class="ph-bold ph-shuffle"></i> Simular Caso
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Output -->
+                <div class="lg:col-span-6 space-y-4">
+                    <div class="pearl-glass rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-l-4 border-l-indigo-500">
+                        <div>
+                            <span class="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400">Importancia del Impacto ($I$)</span>
+                            <div class="flex items-baseline gap-3 mt-1">
+                                <span id="simScoreNumber" class="font-display text-4xl font-extrabold text-indigo-900 dark:text-white">-28</span>
+                                <span id="simSeverityBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30">
+                                    IMPACTO MODERADO
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-left sm:text-right font-mono text-xs space-y-1">
+                            <div class="text-slate-500 dark:text-slate-400">Trazabilidad Obligatoria:</div>
+                            <div class="font-semibold text-emerald-600 dark:text-emerald-400">Vinculado a Medida Cap. VI</div>
+                        </div>
+                    </div>
+
+                    <!-- Auto-generated Chapter V + Chapter VI Measure -->
+                    <div class="pearl-glass rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-2">
+                                <i class="ph-fill ph-sparkle text-indigo-500 text-base"></i>
+                                Dictamen Cap. V + Medida de Mitigación Cap. VI (<code class="underline">assistant.py</code>)
+                            </span>
+                            <button onclick="copyTextById('simAiText', 'copyDraftBtn')" id="copyDraftBtn" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 transition flex items-center gap-1.5">
+                                <i class="ph-bold ph-copy"></i>
+                                <span>Copiar para MIA</span>
+                            </button>
+                        </div>
+
+                        <div id="simAiText" class="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-200 font-sans bg-white/60 dark:bg-slate-900/60 p-4 rounded-xl border border-indigo-100 dark:border-slate-700 space-y-2">
+                            <!-- Populated by updateCap5Simulation() -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== WORKBENCH TAB 2: VALIDADOR TAXONÓMICO NOM-059 (Cap. IV & VI) ==================== -->
+            <div id="wb-panel-nom059" class="wb-panel hidden grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div class="lg:col-span-5 pearl-glass rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-indigo-200/60 dark:border-indigo-500/20 pb-3">
+                        <span class="font-display font-bold text-base flex items-center gap-2">
+                            <i class="ph-duotone ph-leaf text-emerald-600 text-xl"></i>
+                            Muestreo Florístico y Faunístico
+                        </span>
+                        <span class="font-mono text-xs text-amber-600 dark:text-amber-400 font-bold">NOM-059-SEMARNAT-2010</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300">
+                        Selecciona una especie registrada en tus transectos o puntos de conteo para ver cómo NODO etiqueta automáticamente su categoría de riesgo y redacta su ficha técnica para el Capítulo IV y su protocolo de rescate para el Capítulo VI:
+                    </p>
+                    <div id="speciesSelectorList" class="space-y-2.5">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 pearl-glass rounded-2xl p-6 space-y-4">
+                    <div id="speciesDetailHeader" class="flex flex-wrap items-center justify-between gap-3 border-b border-indigo-200/60 dark:border-indigo-500/20 pb-4">
+                        <!-- Populated via JS -->
+                    </div>
+                    <div id="speciesDetailBody" class="space-y-4 text-xs sm:text-sm">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== WORKBENCH TAB 3: VINCULACIÓN JURÍDICA CAP. III (assistant.py) ==================== -->
+            <div id="wb-panel-juridico" class="wb-panel hidden grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div class="lg:col-span-5 pearl-glass rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-indigo-200/60 dark:border-indigo-500/20 pb-3">
+                        <span class="font-display font-bold text-base flex items-center gap-2">
+                            <i class="ph-duotone ph-gavel text-indigo-600 text-xl"></i>
+                            Supuesto Ambiental del Proyecto
+                        </span>
+                        <span class="font-mono text-xs text-indigo-600 dark:text-indigo-300 font-bold">Cap. III MIA</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300">
+                        Elige el ecosistema o condicionante territorial de tu polígono para generar la matriz de vinculación normativa fundamentada:
+                    </p>
+                    <div class="space-y-2.5" id="legalScenarioButtons">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 pearl-glass rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-indigo-200/60 dark:border-indigo-500/20 pb-3">
+                        <span class="text-xs font-mono font-bold text-indigo-700 dark:text-indigo-300">
+                            ARGUMENTACIÓN JURÍDICA GENERADA POR <code class="underline">assistant.py</code>
+                        </span>
+                        <button onclick="copyTextById('legalOutputText', 'copyLegalBtn')" id="copyLegalBtn" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 transition flex items-center gap-1.5">
+                            <i class="ph-bold ph-copy"></i>
+                            <span>Copiar Vinculación</span>
+                        </button>
+                    </div>
+                    <div id="legalOutputText" class="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 bg-white/60 dark:bg-slate-900/60 p-4 rounded-xl border border-indigo-100 dark:border-slate-700 leading-relaxed">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================= 5. COBERTURA INTEGRAL DE LOS 8 CAPÍTULOS OFICIALES SEMARNAT ================= -->
+    <section id="capitulos-mia" class="py-20 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full pearl-glass text-xs font-mono font-semibold text-indigo-700 dark:text-indigo-300 mb-3">
+                    <i class="ph-duotone ph-books text-base"></i>
+                    <span>ESTRUCTURA OFICIAL SEMARNAT EN <code class="font-mono">backend/structure.py</code></span>
+                </div>
+                <h2 class="font-display text-3xl sm:text-4xl font-extrabold tracking-tight">
+                    Los 8 Capítulos de la MIA Conectados entre Sí
+                </h2>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="filterChapters('all')" data-cfilter="all" class="chap-filter-btn btn-pearl-3d px-4 py-2 rounded-xl text-xs font-semibold">
+                    Todos los Capítulos (I - VIII)
+                </button>
+                <button onclick="filterChapters('biotico')" data-cfilter="biotico" class="chap-filter-btn pearl-glass px-4 py-2 rounded-xl text-xs font-semibold hover:border-indigo-400">
+                    Núcleo Biológico (Cap. IV, V, VI, VII)
+                </button>
+                <button onclick="filterChapters('legal')" data-cfilter="legal" class="chap-filter-btn pearl-glass px-4 py-2 rounded-xl text-xs font-semibold hover:border-indigo-400">
+                    Legal, Promovente y Anexos (Cap. I, II, III, VIII)
+                </button>
+            </div>
+        </div>
+
+        <!-- 8 Chapters Grid -->
+        <div id="chaptersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- ================= 6. PRIVACIDAD LOCAL PARA DATOS SENSIBLES DE CAMPO ================= -->
+    <section id="privacidad-campo" class="py-20 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-14">
+            <span class="px-3.5 py-1.5 rounded-full pearl-glass text-xs font-mono font-semibold text-indigo-700 dark:text-indigo-300 inline-block mb-3">
+                CONFIDENCIALIDAD DE MUESTREOS Y POLÍGONOS
+            </span>
+            <h2 class="font-display text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">
+                ¿Por qué un Biólogo Consultor necesita ejecución 100% local (<code class="font-mono text-indigo-600 dark:text-indigo-400">RADIX_MIA_Local</code>)?
+            </h2>
+            <p class="text-slate-600 dark:text-slate-300 text-base">
+                Tus bases de datos de colecta científica, coordenadas de nidos o especies prioritarias, polígonos de inversión del promovente (`company.py`) y cédulas de peritos (`team.py`) nunca salen de tu computadora.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
+            <div class="pearl-glass pearl-card-hover rounded-3xl p-7">
+                <div class="w-12 h-12 rounded-2xl btn-pearl-3d flex items-center justify-center mb-5">
+                    <i class="ph-bold ph-map-pin-line text-2xl"></i>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2">Resguardo de Cartografía y Anexos en <code class="font-mono text-sm text-indigo-600 dark:text-indigo-300">data/files/</code></h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                    Guarda tus layouts cartográficos, memorias fotográficas de campo, bitácoras de muestreo y actas constitutivas con identificadores UUID locales administrados por <code class="font-mono">store.py</code>.
+                </p>
+                <div class="font-mono text-[11px] p-2.5 rounded-xl bg-indigo-500/10 text-indigo-800 dark:text-indigo-200 truncate">
+                    data/files/f831a5590fd5..._Poligono_UGA.pdf
+                </div>
+            </div>
+
+            <div class="pearl-glass pearl-card-hover rounded-3xl p-7">
+                <div class="w-12 h-12 rounded-2xl btn-pearl-3d flex items-center justify-center mb-5">
+                    <i class="ph-bold ph-users-three text-2xl"></i>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2">Gestión de Cédulas y Especialistas (<code class="font-mono text-sm text-indigo-600 dark:text-indigo-300">team.py</code>)</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                    Administra el padrón de biólogos, mastozóologos, herpetólogos, botánicos e hidrólogos responsables de cada capítulo, cumpliendo con la declaratoria bajo protesta de decir verdad (Art. 35 LGEEPA).
+                </p>
+                <div class="font-mono text-[11px] p-2.5 rounded-xl bg-indigo-500/10 text-indigo-800 dark:text-indigo-200">
+                    Responsables Técnicos • Cap. I y Cap. VIII
+                </div>
+            </div>
+
+            <div class="pearl-glass pearl-card-hover rounded-3xl p-7">
+                <div class="w-12 h-12 rounded-2xl btn-pearl-3d flex items-center justify-center mb-5">
+                    <i class="ph-bold ph-file-doc text-2xl"></i>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2">Compilación Lista para Ventanilla (<code class="font-mono text-sm text-indigo-600 dark:text-indigo-300">exports.py</code>)</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                    Genera el documento técnico unificado con tablas de impacto cuadradas, índices de diversidad, nombres científicos en cursiva reglamentaria y vinculación jurídica completa.
+                </p>
+                <div class="font-mono text-[11px] p-2.5 rounded-xl bg-indigo-500/10 text-indigo-800 dark:text-indigo-200">
+                    Exportación Local • Cero Latencia de Red
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 7. FOOTER ================= -->
+    <footer class="mt-12 border-t border-indigo-200/70 dark:border-indigo-500/20 py-12 px-4 sm:px-6 lg:px-10 pearl-glass">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <svg class="h-8 w-auto nodo-3d-svg" viewBox="0 0 510 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g filter="url(#pearl3DFilter)">
+                        <path d="M 32 122 L 32 32 L 106 120 L 106 30" stroke="url(#pearlTubeGrad)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="192" cy="76" r="48" stroke="url(#pearlTubeGrad)" stroke-width="26" />
+                        <circle cx="125" cy="76" r="21" fill="url(#pearlSphereGrad)" />
+                        <path d="M 284 36 A 47 47 0 1 1 284 116" stroke="url(#pearlTubeGrad)" stroke-width="26" stroke-linecap="round" />
+                        <circle cx="434" cy="76" r="48" stroke="url(#pearlTubeGrad)" stroke-width="26" />
+                        <circle cx="366" cy="76" r="21" fill="url(#pearlSphereGrad)" />
+                    </g>
+                </svg>
+                <div class="text-xs text-slate-600 dark:text-slate-400">
+                    <p class="font-bold text-indigo-950 dark:text-white">NODO by RADIX v0.4.1 (RADIX_MIA_Local)</p>
+                    <p>Suite de Cumplimiento SEMARNAT para Biólogos y Consultores Ambientales</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 text-xs font-mono text-slate-500 dark:text-slate-400">
+                <span>Build: VERSION3</span>
+                <span>•</span>
+                <button onclick="openDictamenModal()" class="text-indigo-600 dark:text-indigo-300 font-semibold hover:underline">
+                    Previsualizar Dictamen de Exportación
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= MODAL: PREVISUALIZACIÓN DE DICTAMEN Y ARRANQUE LOCAL ================= -->
+    <div id="dictamenModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-indigo-950/50 backdrop-blur-md">
+        <div class="pearl-glass-strong rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-white/90 shadow-2xl relative">
+            <button onclick="closeDictamenModal()" class="absolute top-5 right-5 w-9 h-9 rounded-xl pearl-glass flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-rose-500">
+                <i class="ph-bold ph-x text-lg"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-11 h-11 rounded-2xl btn-pearl-3d flex items-center justify-center">
+                    <i class="ph-bold ph-file-check text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-display font-bold text-lg">Reporte de Congruencia Técnica SEMARNAT (<code class="font-mono text-indigo-600 dark:text-indigo-300">exports.py</code>)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Generado localmente desde <code class="font-mono">INICIAR_RADIX.cmd</code> • <code class="font-mono">VERSION3 (v0.4.1)</code></p>
+                </div>
+            </div>
+
+            <div class="bg-slate-950 text-indigo-100 font-mono text-xs rounded-2xl p-4 space-y-2.5 border border-indigo-500/30 shadow-inner max-h-80 overflow-y-auto">
+                <div class="text-emerald-400 font-bold">[AUDITORÍA INTERNA NODO v0.4.1 — EXPEDIENTE MIA-PARTICULAR]</div>
+                <div>✔ Cap. I (company.py / team.py): Promovente RFC verificado + 4 Biólogos con cédula profesional asignados.</div>
+                <div>✔ Cap. II (structure.py): Superficie total del predio (12.40 ha) y área de desmonte (3.15 ha) bloqueadas contra discrepancias.</div>
+                <div>✔ Cap. III (assistant.py): Vinculación completada con Art. 28 LGEEPA, NOM-059-SEMARNAT-2010, NOM-022-SEMARNAT-2003 y UGA Costera.</div>
+                <div>✔ Cap. IV (Sistema Ambiental): Índices de Shannon-Wiener (H'=2.84) y 5 especies en categoría de protección sincronizadas.</div>
+                <div class="text-amber-300">✔ Cap. V y VI (chapter_five.py): 14 impactos significativos evaluados → 14 Medidas de Prevención, Rescate y Reubicación vinculadas 1:1.</div>
+                <div class="text-indigo-300">✔ Cap. VIII (store.py): 9 anexos técnicos y cartográficos verificados en ./data/files/</div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+                <span class="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                    <i class="ph-fill ph-shield-check text-emerald-600"></i> Listo para integración de carpeta de ingreso SEMARNAT
+                </span>
+                <button onclick="closeDictamenModal()" class="btn-pearl-3d px-5 py-2.5 rounded-xl text-xs font-bold">
+                    Cerrar Vista Previa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // 1. Hero Biologist Workspace Views
+        const heroWorkspaceViews = {
+            nom059: `
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <div>
+                            <span class="text-xs font-mono uppercase text-indigo-600 dark:text-indigo-300 font-bold">Capítulo IV • Inventario Florístico y Faunístico</span>
+                            <h4 class="font-display text-lg font-bold">Cruce Automático con NOM-059-SEMARNAT-2010 y CITES</h4>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30">
+                            5 Especies con Categoría de Riesgo
+                        </span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="border-b border-indigo-200 dark:border-slate-700 text-slate-500 font-mono">
+                                    <th class="py-2">Taxón (Nombre Científico)</th>
+                                    <th class="py-2">Grupo</th>
+                                    <th class="py-2">NOM-059</th>
+                                    <th class="py-2">Endemismo</th>
+                                    <th class="py-2">Acción Automática en Cap. VI</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-indigo-100 dark:divide-slate-800">
+                                <tr>
+                                    <td class="py-2.5 italic font-semibold text-indigo-950 dark:text-white">Rhizophora mangle</td>
+                                    <td class="py-2.5">Flora (Manglar)</td>
+                                    <td class="py-2.5"><span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-300 font-mono font-bold">A (Amenazada)</span></td>
+                                    <td class="py-2.5">No endémica</td>
+                                    <td class="py-2.5 font-mono text-[11px] text-emerald-600 dark:text-emerald-400">Buffer de amortiguamiento NOM-022</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 italic font-semibold text-indigo-950 dark:text-white">Pterocereus gaumeri</td>
+                                    <td class="py-2.5">Flora (Cactaceae)</td>
+                                    <td class="py-2.5"><span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-700 dark:text-rose-300 font-mono font-bold">P (En Peligro)</span></td>
+                                    <td class="py-2.5 font-semibold text-indigo-600 dark:text-indigo-300">Endémica</td>
+                                    <td class="py-2.5 font-mono text-[11px] text-emerald-600 dark:text-emerald-400">Rescate y trasplante 100% individuos</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 italic font-semibold text-indigo-950 dark:text-white">Ctenosaura similis</td>
+                                    <td class="py-2.5">Herpetofauna</td>
+                                    <td class="py-2.5"><span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-300 font-mono font-bold">A (Amenazada)</span></td>
+                                    <td class="py-2.5">No endémica</td>
+                                    <td class="py-2.5 font-mono text-[11px] text-emerald-600 dark:text-emerald-400">Ahuyentamiento y captura previa</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 italic font-semibold text-indigo-950 dark:text-white">Amazona xantholora</td>
+                                    <td class="py-2.5">Avifauna</td>
+                                    <td class="py-2.5"><span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-300 font-mono font-bold">A (Amenazada)</span></td>
+                                    <td class="py-2.5 font-semibold text-indigo-600 dark:text-indigo-300">Cuasiendémica</td>
+                                    <td class="py-2.5 font-mono text-[11px] text-emerald-600 dark:text-emerald-400">Restricción de desmonte en anidación</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-indigo-200/60 dark:border-indigo-500/20 flex items-center justify-between text-xs text-slate-500">
+                    <span>Nomenclatura cursiva validada y sincronizada con el Capítulo VI</span>
+                    <a href="#estacion-biologo" onclick="switchWorkbenchTab('nom059')" class="text-indigo-600 dark:text-indigo-300 font-semibold hover:underline">Probar Validador NOM-059 →</a>
+                </div>
+            `,
+            diversidad: `
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <div>
+                            <span class="text-xs font-mono uppercase text-indigo-600 dark:text-indigo-300 font-bold">Capítulo IV • Delimitación del Sistema Ambiental (SA)</span>
+                            <h4 class="font-display text-lg font-bold">Parámetros Ecológicos y Esfuerzo de Muestreo</h4>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
+                            Curva de Acumulación Asintótica
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs mb-4">
+                        <div class="p-3.5 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-indigo-200/70 dark:border-slate-700">
+                            <span class="text-slate-500 font-mono">Shannon-Wiener (H')</span>
+                            <div class="text-2xl font-display font-extrabold text-indigo-900 dark:text-white mt-1">2.84 <span class="text-xs font-normal text-emerald-600">bits/ind</span></div>
+                            <p class="text-[11px] text-slate-500 mt-1">Diversidad media-alta en estrato arbóreo y arbustivo</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-indigo-200/70 dark:border-slate-700">
+                            <span class="text-slate-500 font-mono">Equitatividad de Pielou (J')</span>
+                            <div class="text-2xl font-display font-extrabold text-indigo-900 dark:text-white mt-1">0.79 <span class="text-xs font-normal text-indigo-600">homogéneo</span></div>
+                            <p class="text-[11px] text-slate-500 mt-1">Sin dominancia crítica de especies invasoras</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-indigo-200/70 dark:border-slate-700">
+                            <span class="text-slate-500 font-mono">Valor de Importancia (IVI)</span>
+                            <div class="text-lg font-display font-bold text-indigo-900 dark:text-white mt-1 italic">Bursera simaruba</div>
+                            <p class="text-[11px] text-slate-500 mt-1">Especie dominante para paleta vegetal de reforestación</p>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-indigo-500/10 border border-indigo-400/30 text-xs text-slate-700 dark:text-slate-200">
+                        <strong>Síntesis generada para Cap. IV:</strong> "El Sistema Ambiental (SA) abarca 184.50 ha delimitadas por microcuenca hidrográfica y continuidad de unidad de vegetación, presentando un índice $H'=2.84$ que sustenta la conectividad biológica del corredor..."
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-indigo-200/60 dark:border-indigo-500/20 flex items-center justify-between text-xs text-slate-500">
+                    <span>Anexos de campo resguardados en <code class="font-mono">data/files/</code></span>
+                    <span class="font-mono text-indigo-600 dark:text-indigo-300">structure.py + store.py</span>
+                </div>
+            `,
+            trazabilidad: `
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <div>
+                            <span class="text-xs font-mono uppercase text-indigo-600 dark:text-indigo-300 font-bold">Módulo: backend/chapter_five.py</span>
+                            <h4 class="font-display text-lg font-bold">Matriz Espejo: Impacto Evaluado (Cap. V) ↔ Medida (Cap. VI)</h4>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-indigo-500/15 text-indigo-700 dark:text-indigo-300">
+                            Cero Impactos Huérfanos
+                        </span>
+                    </div>
+                    <div class="space-y-2.5 text-xs">
+                        <div class="p-3 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-indigo-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                                <span class="font-mono font-bold text-rose-600">[IMP-04 • I = -36 Severo]</span>
+                                <span class="font-semibold ml-1">Remoción de cobertura vegetal en 3.15 ha de selva baja</span>
+                            </div>
+                            <span class="font-mono text-[11px] px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold shrink-0">
+                                → MED-04: Programa de Rescate Botánico y Reforestación 1:3
+                            </span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-indigo-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                                <span class="font-mono font-bold text-amber-600">[IMP-07 • I = -28 Moderado]</span>
+                                <span class="font-semibold ml-1">Efecto barrera y ahuyentamiento de vertebrados terrestres</span>
+                            </div>
+                            <span class="font-mono text-[11px] px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold shrink-0">
+                                → MED-07: Pasos de Fauna y Ahuyentamiento Previo
+                            </span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-indigo-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                                <span class="font-mono font-bold text-amber-600">[IMP-11 • I = -25 Moderado]</span>
+                                <span class="font-semibold ml-1">Compactación y pérdida de suelo orgánico por maquinaria</span>
+                            </div>
+                            <span class="font-mono text-[11px] px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold shrink-0">
+                                → MED-11: Acopio de Tierra Vegetal para Áreas Verdes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-indigo-200/60 dark:border-indigo-500/20 flex items-center justify-between text-xs text-slate-500">
+                    <span>Garantiza congruencia metodológica entre los Capítulos V, VI y VII</span>
+                    <span class="font-mono text-indigo-600 dark:text-indigo-300">chapter_five.py</span>
+                </div>
+            `,
+            vinculacion: `
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div>
+                            <span class="text-xs font-mono uppercase text-indigo-600 dark:text-indigo-300 font-bold">Módulo: backend/assistant.py</span>
+                            <h4 class="font-display text-lg font-bold">Vinculación con Ordenamientos Jurídicos (Cap. III)</h4>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-purple-500/15 text-purple-700 dark:text-purple-300">
+                            LGEEPA • POET • NOMs
+                        </span>
+                    </div>
+                    <div class="space-y-2.5 text-xs">
+                        <div class="p-3 rounded-xl bg-indigo-500/10 border border-indigo-400/30">
+                            <div class="font-mono text-[11px] text-indigo-700 dark:text-indigo-300 font-bold mb-1">Criterio UGA / POET Detectado:</div>
+                            <p class="text-slate-700 dark:text-slate-200">"Polígono ubicado en UGA de Aprovechamiento Sustentable con presencia colindante de vegetación hidrófila."</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-indigo-200 dark:border-slate-700">
+                            <div class="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-bold mb-1">Texto de Cumplimiento Generado:</div>
+                            <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                                "En estricto apego al <strong>Artículo 28 de la LGEEPA</strong>, el Artículo 5° de su Reglamento en Materia de Evaluación del Impacto Ambiental y el numeral 4.16 de la <strong>NOM-022-SEMARNAT-2003</strong>, el proyecto respeta una franja de amortiguamiento biológica mínima de 100 metros respecto al límite del manglar, manteniendo inalterado el flujo hidrológico superficial..."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-indigo-200/60 dark:border-indigo-500/20 flex items-center justify-between text-xs text-slate-500">
+                    <span>Redacción técnico-jurídica lista para insertar en el Capítulo III</span>
+                    <span class="font-mono text-indigo-600 dark:text-indigo-300">assistant.py</span>
+                </div>
+            `
+        };
+
+        function switchHeroWorkspace(tabKey) {
+            document.getElementById('heroWorkspaceViewport').innerHTML = heroWorkspaceViews[tabKey];
+            document.querySelectorAll('.hero-ws-tab').forEach(btn => {
+                btn.className = 'hero-ws-tab px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-700 transition';
+            });
+            const active = document.getElementById('hero-tab-' + tabKey);
+            if (active) {
+                active.className = 'hero-ws-tab px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-white dark:bg-indigo-600 text-indigo-900 dark:text-white shadow-sm transition';
+            }
+        }
+
+        // 2. Workbench Tab Switcher (3 Functional Tabs)
+        function switchWorkbenchTab(tabId) {
+            ['cap5', 'nom059', 'juridico'].forEach(id => {
+                const panel = document.getElementById('wb-panel-' + id);
+                const btn = document.getElementById('wb-btn-' + id);
+                if (id === tabId) {
+                    panel.classList.remove('hidden');
+                    panel.classList.add('grid');
+                    btn.className = 'wb-tab-btn btn-pearl-3d px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2';
+                } else {
+                    panel.classList.add('hidden');
+                    panel.classList.remove('grid');
+                    btn.className = 'wb-tab-btn pearl-glass px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2';
+                }
+            });
+        }
+
+        // 3. Tab 1: Chapter V Impact Simulator + Linked Chapter VI Mitigation
+        function updateCap5Simulation() {
+            const actEl = document.getElementById('simActivity');
+            const facEl = document.getElementById('simFactor');
+            const IN = parseInt(document.getElementById('sliderIN').value, 10);
+            const EX = parseInt(document.getElementById('sliderEX').value, 10);
+            const PE = parseInt(document.getElementById('sliderPE').value, 10);
+            const RV = parseInt(document.getElementById('sliderRV').value, 10);
+            const MC = parseInt(document.getElementById('sliderMC').value, 10);
+
+            document.getElementById('valIN').textContent = `${IN} / 8`;
+            document.getElementById('valEX').textContent = `${EX} / 4`;
+            document.getElementById('valPE').textContent = PE;
+            document.getElementById('valRV').textContent = RV;
+            document.getElementById('valMC').textContent = MC;
+
+            // Conesa formula with base constants (MO=2, SI=1, AC=1, EF=4, PR=1 => +9)
+            const rawScore = (3 * IN) + (2 * EX) + PE + RV + MC + 9;
+            document.getElementById('simScoreNumber').textContent = `-${rawScore}`;
+
+            const badge = document.getElementById('simSeverityBadge');
+            let severity = '';
+            if (rawScore < 25) {
+                severity = 'IMPACTO IRRELEVANTE / COMPATIBLE';
+                badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30';
+            } else if (rawScore <= 42) {
+                severity = 'IMPACTO MODERADO';
+                badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30';
+            } else {
+                severity = 'IMPACTO SEVERO';
+                badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/30';
+            }
+            badge.textContent = severity;
+
+            const mitigationMap = {
+                selva: 'ejecución del Programa de Rescate y Reubicación de Flora Silvestre previo al desmonte, trituración de material vegetativo para reincorporación orgánica y compensación mediante reforestación con especies nativas de alto IVI en proporción 1:3',
+                herpeto: 'aplicación de brechas de ahuyentamiento dirigido, rescate manual por biólogos herpetólogos certificados y reubicación en hábitat homólogo dentro del área de conservación del Sistema Ambiental',
+                hidro: 'instalación de obras de drenaje transversal (pasos de agua) dimensionadas para el periodo de retorno hidrológico, trampas de sedimentos y prohibición absoluta de azolve en cauces preferenciales',
+                suelo: 'despalme selectivo de los primeros 20 cm de suelo orgánico (Horizonte A/O), acopio en camellones protegidos contra erosión eólica/hídrica y reincorporación en áreas de restauración paisajística'
+            };
+
+            const actText = actEl.options[actEl.selectedIndex].text;
+            const facText = facEl.options[facEl.selectedIndex].text;
+            const mitText = mitigationMap[facEl.value];
+
+            document.getElementById('simAiText').innerHTML = `
+                <p><strong>[Cap. V • Evaluación de Impacto]:</strong> La actividad de <em>"${actText}"</em> sobre el factor <em>"${facText}"</em> arroja un Índice de Importancia <strong>I = -${rawScore} (${severity})</strong>, determinado por una intensidad IN=${IN}, extensión EX=${EX}, persistencia PE=${PE}, reversibilidad RV=${RV} y recuperabilidad MC=${MC}.</p>
+                <p class="pt-2 border-t border-indigo-200/60 dark:border-slate-700 text-emerald-800 dark:text-emerald-300"><strong>[Cap. VI • Medida Vinculada Automáticamente]:</strong> Para garantizar la viabilidad ambiental ante SEMARNAT, se establece como condicionante obligatoria la ${mitText}.</p>
+            `;
+        }
+
+        function randomizeCap5() {
+            document.getElementById('sliderIN').value = Math.floor(Math.random() * 8) + 1;
+            document.getElementById('sliderEX').value = Math.floor(Math.random() * 4) + 1;
+            document.getElementById('sliderPE').value = Math.floor(Math.random() * 4) + 1;
+            document.getElementById('sliderRV').value = Math.floor(Math.random() * 4) + 1;
+            document.getElementById('sliderMC').value = Math.floor(Math.random() * 8) + 1;
+            document.getElementById('simActivity').selectedIndex = Math.floor(Math.random() * 4);
+            document.getElementById('simFactor').selectedIndex = Math.floor(Math.random() * 4);
+            updateCap5Simulation();
+        }
+
+        // 4. Tab 2: NOM-059 Taxonomic Validator Data & Logic
+        const speciesData = [
+            {
+                id: 'mangle',
+                scientific: 'Rhizophora mangle',
+                common: 'Mangle rojo',
+                group: 'Flora • Rhizophoraceae',
+                nom: 'A (Amenazada)',
+                badgeColor: 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-500/30',
+                cites: 'No listada',
+                endemism: 'Nativa (Humedal Costero)',
+                cap4Text: 'Especie estructuradora de ecosistema de manglar registrada en la periferia del Sistema Ambiental. Su presencia activa la observancia obligatoria de la NOM-022-SEMARNAT-2003 y el Art. 60 TER de la LGEEPA.',
+                cap6Text: 'Delimitación física con estacado topográfico de la franja de amortiguamiento, prohibición total de poda, relleno o alteración del hidroperiodo y monitoreo piezométrico trimestral.'
+            },
+            {
+                id: 'gaumeri',
+                scientific: 'Pterocereus gaumeri',
+                common: 'Órgano kankab / Cacto columnar',
+                group: 'Flora • Cactaceae',
+                nom: 'P (En Peligro de Extinción)',
+                badgeColor: 'bg-rose-500/20 text-rose-800 dark:text-rose-300 border-rose-500/30',
+                cites: 'Apéndice II CITES',
+                endemism: 'Endémica de la Península de Yucatán',
+                cap4Text: 'Cactácea columnar endémica en categoría de Peligro de Extinción (P) asociada a selva baja caducifolia con cactáceas candelabriformes. Registrada con densidad de 4 ind/ha dentro del polígono.',
+                cap6Text: 'Rescate del 100% de los individuos georreferenciados mediante banqueo radicular, cicatrización fitosanitaria, mantenimiento en vivero temporal y reubicación en el área de conservación perpetua del proyecto.'
+            },
+            {
+                id: 'ctenosaura',
+                scientific: 'Ctenosaura similis',
+                common: 'Iguana rayada / Garrobo',
+                group: 'Herpetofauna • Iguanidae',
+                nom: 'A (Amenazada)',
+                badgeColor: 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-500/30',
+                cites: 'No listada',
+                endemism: 'Nativa Mesoamericana',
+                cap4Text: 'Reptil heliotermo registrado en oquedades kársticas y bordes de vegetación secundaria. Cumple funciones clave como dispersor de semillas y presa de mesodepredadores.',
+                cap6Text: 'Búsqueda intensiva en refugios rocosos y arbóreos 5 días antes del inicio del desmonte, captura manual/con lazo herpetológico, marcaje temporal e ingreso a bitácora fotográfica de liberación.'
+            },
+            {
+                id: 'panthera',
+                scientific: 'Panthera onca',
+                common: 'Jaguar',
+                group: 'Mastofauna • Felidae',
+                nom: 'P (En Peligro de Extinción)',
+                badgeColor: 'bg-rose-500/20 text-rose-800 dark:text-rose-300 border-rose-500/30',
+                cites: 'Apéndice I CITES',
+                endemism: 'Especie Prioritaria para la Conservación',
+                cap4Text: 'Especie paraguas e indicadora de integridad ecológica regional, detectada mediante fototrampeo en el corredor biológico del Sistema Ambiental.',
+                cap6Text: 'Conservación de corredor biológico continuo sin cercado perimetral fragmentante, instalación de pasos de fauna con diseño de guía vegetativa, límite de velocidad interna (20 km/h) e iluminación dirigida hacia el suelo.'
+            }
+        ];
+
+        function renderSpeciesValidator(selectedId = 'mangle') {
+            const listEl = document.getElementById('speciesSelectorList');
+            listEl.innerHTML = speciesData.map(sp => `
+                <button onclick="renderSpeciesValidator('${sp.id}')" class="w-full text-left p-3 rounded-xl transition flex items-center justify-between border ${sp.id === selectedId ? 'bg-indigo-600 text-white border-indigo-500 shadow-md' : 'bg-white/75 dark:bg-slate-800/75 border-indigo-200/70 dark:border-slate-700 hover:border-indigo-400'}">
+                    <div>
+                        <div class="italic font-bold text-sm">${sp.scientific}</div>
+                        <div class="text-xs ${sp.id === selectedId ? 'text-indigo-100' : 'text-slate-500 dark:text-slate-400'}">${sp.common} • ${sp.group}</div>
+                    </div>
+                    <span class="font-mono text-[11px] font-bold px-2 py-0.5 rounded ${sp.id === selectedId ? 'bg-white/20 text-white' : sp.badgeColor}">
+                        ${sp.nom.split(' ')[0]}
+                    </span>
+                </button>
+            `).join('');
+
+            const current = speciesData.find(s => s.id === selectedId);
+            document.getElementById('speciesDetailHeader').innerHTML = `
+                <div>
+                    <span class="text-xs font-mono text-indigo-600 dark:text-indigo-300 font-bold">${current.group} • ${current.endemism}</span>
+                    <h4 class="font-display text-2xl font-extrabold italic">${current.scientific} <span class="not-italic text-base font-normal text-slate-500">(${current.common})</span></h4>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-mono font-bold border ${current.badgeColor}">${current.nom}</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-indigo-500/15 text-indigo-700 dark:text-indigo-300">${current.cites}</span>
+                </div>
+            `;
+
+            document.getElementById('speciesDetailBody').innerHTML = `
+                <div class="p-4 rounded-xl bg-white/75 dark:bg-slate-900/60 border border-indigo-200/70 dark:border-slate-700">
+                    <div class="text-xs font-mono font-bold text-indigo-700 dark:text-indigo-300 mb-1">Párrafo Automático para Capítulo IV (Descripción del Sistema Ambiental):</div>
+                    <p class="leading-relaxed text-slate-700 dark:text-slate-200">${current.cap4Text}</p>
+                </div>
+                <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                    <div class="text-xs font-mono font-bold text-emerald-800 dark:text-emerald-300 mb-1">Medida Obligatoria Vinculada para Capítulo VI (Programa de Rescate):</div>
+                    <p class="leading-relaxed text-slate-700 dark:text-slate-200">${current.cap6Text}</p>
+                </div>
+            `;
+        }
+
+        // 5. Tab 3: Legal Linkage Assistant Data (Cap. III)
+        const legalScenarios = [
+            {
+                id: 'forestal',
+                title: 'Cambio de Uso de Suelo en Terrenos Forestales (Selva / Bosque)',
+                normas: 'Art. 28 Fracc. VII LGEEPA • LGDFS • NOM-059-SEMARNAT-2010',
+                text: `<p><strong>1. Ley General del Equilibrio Ecológico y la Protección al Ambiente (LGEEPA):</strong> En cumplimiento con el <strong>Artículo 28, fracción VII</strong> y el Artículo 5°, inciso O) de su Reglamento en Materia de Evaluación del Impacto Ambiental (REIA), se somete a evaluación la remoción de vegetación para obras y actividades en terrenos con cobertura forestal.</p>
+                <p><strong>2. Vinculación con la NOM-059-SEMARNAT-2010:</strong> El proyecto garantiza la continuidad genética de las poblaciones identificadas en el Sistema Ambiental mediante la ejecución previa del Programa de Rescate y Reubicación de Flora y Fauna Silvestre (Cap. VI), asegurando la no afectación a la viabilidad poblacional.</p>`
+            },
+            {
+                id: 'costero',
+                title: 'Proyecto en Ecosistema Costero o Cercano a Humedal / Manglar',
+                normas: 'Art. 28 Fracc. X LGEEPA • Art. 60 TER • NOM-022-SEMARNAT-2003',
+                text: `<p><strong>1. Art. 28 Fracción X de la LGEEPA y Art. 5° inciso Q) del REIA:</strong> Las obras proyectadas en ecosistemas costeros han sido diseñadas bajo criterios de conservación del flujo hidrológico superficial y subsuperficial (kárstico).</p>
+                <p><strong>2. Cumplimiento estricto de la NOM-022-SEMARNAT-2003 y Art. 60 TER LGEEPA:</strong> El polígono de desplante de infraestructura respeta íntegramente las comunidades de <em>Rhizophora mangle</em>, <em>Avicennia germinans</em>, <em>Laguncularia racemosa</em> y <em>Conocarpus erectus</em>, estableciendo una zona de amortiguamiento libre de obras permanentes.</p>`
+            },
+            {
+                id: 'poet',
+                title: 'Compatibilidad con POET / UGA y Programa de Desarrollo Urbano',
+                normas: 'Art. 20 BIS 4 y Art. 35 LGEEPA • Criterios Ecológicos UGA',
+                text: `<p><strong>1. Vinculación con el Programa de Ordenamiento Ecológico del Territorio (POET):</strong> Conforme al análisis espacial de superposición GIS almacenado en <code>store.py</code>, el predio se ubica dentro de la Unidad de Gestión Ambiental (UGA) con política de <em>Aprovechamiento Sustentable</em>, cumpliendo con el Coeficiente de Ocupación del Suelo (COS) y el porcentaje mínimo de área libre permeable con vegetación nativa.</p>`
+            }
+        ];
+
+        function renderLegalScenarios(selectedId = 'forestal') {
+            const container = document.getElementById('legalScenarioButtons');
+            container.innerHTML = legalScenarios.map(sc => `
+                <button onclick="renderLegalScenarios('${sc.id}')" class="w-full text-left p-3.5 rounded-xl transition border ${sc.id === selectedId ? 'bg-indigo-600 text-white border-indigo-500 shadow-md' : 'bg-white/75 dark:bg-slate-800/75 border-indigo-200/70 dark:border-slate-700 hover:border-indigo-400'}">
+                    <div class="font-bold text-xs sm:text-sm">${sc.title}</div>
+                    <div class="font-mono text-[11px] mt-1 ${sc.id === selectedId ? 'text-indigo-200' : 'text-indigo-600 dark:text-indigo-300'}">${sc.normas}</div>
+                </button>
+            `).join('');
+
+            const current = legalScenarios.find(s => s.id === selectedId);
+            document.getElementById('legalOutputText').innerHTML = current.text;
+        }
+
+        // 6. 8 Official SEMARNAT MIA Chapters Grid (structure.py)
+        const miaChapters = [
+            {
+                num: 'Capítulo I',
+                cat: 'legal',
+                module: 'company.py + team.py',
+                icon: 'ph-identification-card',
+                title: 'Datos Generales del Proyecto, Promovente y Responsable',
+                desc: 'Gestiona RFC, actas constitutivas, representantes legales y el padrón de biólogos y especialistas con sus cédulas profesionales para las declaratorias bajo protesta.'
+            },
+            {
+                num: 'Capítulo II',
+                cat: 'legal',
+                module: 'structure.py + store.py',
+                icon: 'ph-polygon',
+                title: 'Descripción de las Obras y Actividades del Proyecto',
+                desc: 'Unifica cuadros de construcción UTM, superficies de desmonte, despalme, vialidades y cronogramas de preparación, construcción y operación.'
+            },
+            {
+                num: 'Capítulo III',
+                cat: 'legal',
+                module: 'assistant.py',
+                icon: 'ph-scales',
+                title: 'Vinculación con los Ordenamientos Jurídicos Aplicables',
+                desc: 'Cruza tu proyecto contra la LGEEPA, Reglamentos, NOM-059, NOM-022, POET (criterios de UGA), PDUs, ANPs y tratados internacionales (RAMSAR / CITES).'
+            },
+            {
+                num: 'Capítulo IV',
+                cat: 'biotico',
+                module: 'structure.py + assistant.py',
+                icon: 'ph-tree-evergreen',
+                title: 'Descripción del Sistema Ambiental y Problemática',
+                desc: 'Delimita el Sistema Ambiental (SA), integra inventarios florísticos y faunísticos, calcula índices de diversidad (Shannon, Simpson, IVI) y detecta especies en NOM-059.'
+            },
+            {
+                num: 'Capítulo V',
+                cat: 'biotico',
+                module: 'chapter_five.py',
+                icon: 'ph-Sliders-horizontal',
+                title: 'Identificación, Descripción y Evaluación de Impactos',
+                desc: 'Motor matricial auditable que evalúa cada interacción obra-factor ambiental y calcula el Índice de Importancia (Irrelevante, Moderado, Severo o Crítico).'
+            },
+            {
+                num: 'Capítulo VI',
+                cat: 'biotico',
+                module: 'chapter_five.py + assistant.py',
+                icon: 'ph-shield-check',
+                title: 'Medidas Preventivas y de Mitigación de Impactos',
+                desc: 'Asegura trazabilidad 1:1 con el Capítulo V: programas de rescate de flora y fauna, ahuyentamiento, reforestación con especies nativas y pasos de fauna.'
+            },
+            {
+                num: 'Capítulo VII',
+                cat: 'biotico',
+                module: 'assistant.py',
+                icon: 'ph-chart-line-up',
+                title: 'Pronósticos Ambientales y Evaluación de Alternativas',
+                desc: 'Modela el escenario sin proyecto, con proyecto sin medidas y con la aplicación del Sistema de Vigilancia Ambiental para demostrar la resiliencia del SA.'
+            },
+            {
+                num: 'Capítulo VIII',
+                cat: 'legal',
+                module: 'store.py + exports.py',
+                icon: 'ph-folder-Simple-lock',
+                title: 'Instrumentos Metodológicos y Elementos Técnicos',
+                desc: 'Organiza anexos cartográficos SIG, memorias fotográficas de muestreo, hojas de campo en data/files/ y compila el expediente final sin errores de formato.'
+            }
+        ];
+
+        function renderChapters(filter = 'all') {
+            const grid = document.getElementById('chaptersGrid');
+            const filtered = filter === 'all' ? miaChapters : miaChapters.filter(c => c.cat === filter);
+
+            grid.innerHTML = filtered.map(c => `
+                <div class="pearl-glass pearl-card-hover rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <span class="font-mono text-xs font-bold px-3 py-1 rounded-lg bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30">
+                                ${c.num}
+                            </span>
+                            <span class="font-mono text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">${c.module}</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-2.5">
+                            <div class="w-9 h-9 rounded-xl btn-pearl-3d flex items-center justify-center shrink-0">
+                                <i class="ph-bold ${c.icon} text-lg"></i>
+                            </div>
+                            <h3 class="font-display font-bold text-base leading-snug">${c.title}</h3>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            ${c.desc}
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-indigo-200/60 dark:border-indigo-500/20 flex items-center justify-between text-[11px] font-mono text-slate-500">
+                        <span>Guía Oficial SEMARNAT</span>
+                        <span class="text-indigo-600 dark:text-indigo-300 font-bold">Validado ✓</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterChapters(category) {
+            document.querySelectorAll('.chap-filter-btn').forEach(btn => {
+                if (btn.dataset.cfilter === category) {
+                    btn.className = 'chap-filter-btn btn-pearl-3d px-4 py-2 rounded-xl text-xs font-semibold';
+                } else {
+                    btn.className = 'chap-filter-btn pearl-glass px-4 py-2 rounded-xl text-xs font-semibold hover:border-indigo-400';
+                }
+            });
+            renderChapters(category);
+        }
+
+        // 7. Utility Functions: Copy, Theme Toggle, Modal
+        function copyTextById(elementId, btnId) {
+            const text = document.getElementById(elementId).innerText;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const btn = document.getElementById(btnId);
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="ph-bold ph-check text-emerald-500"></i><span>¡Copiado!</span>`;
+            setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
+        }
+
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            htmlEl.classList.toggle('dark');
+            if (htmlEl.classList.contains('dark')) {
+                icon.className = 'ph-duotone ph-sun-dim text-xl text-amber-300';
+            } else {
+                icon.className = 'ph-duotone ph-moon-stars text-xl';
+            }
+        }
+
+        function openDictamenModal() {
+            const modal = document.getElementById('dictamenModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDictamenModal() {
+            const modal = document.getElementById('dictamenModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function triggerLogoPulse() {
+            const logo = document.getElementById('heroNodoLogo');
+            logo.style.transform = 'scale(1.07)';
+            setTimeout(() => { logo.style.transform = ''; }, 350);
+        }
+
+        window.onload = function () {
+            switchHeroWorkspace('nom059');
+            updateCap5Simulation();
+            renderSpeciesValidator('mangle');
+            renderLegalScenarios('forestal');
+            renderChapters('all');
+        };
+    </script>
+</body>
+</html>
